@@ -29,7 +29,14 @@ class BarChartFrame extends Frame
 			{
 				labels.addElement(labelSelect.getText());
 				data.addElement(new Integer(dataSelect.getText()));
-				colors.addElement(colorMap.get(colorSelect.getSelectedItem()));
+
+				// SER515 2, Check if selected color exists in colorMap
+				Color selectedColor = colorMap.get(colorSelect.getSelectedItem());
+				if (selectedColor != null) {
+					colors.addElement(selectedColor);
+				} else {
+					colors.addElement(Color.black); // fallback color
+				}
 
 				chart.setData(data);
 				chart.setColors(colors);
