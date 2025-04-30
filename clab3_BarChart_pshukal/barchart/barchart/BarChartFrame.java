@@ -30,7 +30,7 @@ class BarChartFrame extends Frame
 				labels.addElement(labelSelect.getText());
 				data.addElement(new Integer(dataSelect.getText()));
 
-				// SER515 2, Check if selected color exists in colorMap
+				// SER515 #2 FIX: Check if selected color exists in colorMap
 				Color selectedColor = colorMap.get(colorSelect.getSelectedItem());
 				if (selectedColor != null) {
 					colors.addElement(selectedColor);
@@ -63,27 +63,32 @@ class BarChartFrame extends Frame
 		colorMap.put("magenta", Color.magenta);
 		colorMap.put("gray", Color.gray);
 
-		// SER515 #3: There are multiple problems here, ranging from input data validation
-		// to data in the file matching what is in the color map to how exceptions are
-		// handled. Improve the code to handle these 3 problems.
+		// SER515 #3: Improve input validation, color map checking, and exception handling
 		try {
 			FileReader bridge = new FileReader(fname);
-			StreamTokenizer	tokens = new StreamTokenizer(bridge);
+			StreamTokenizer tokens = new StreamTokenizer(bridge);
 
 			while (tokens.nextToken() != StreamTokenizer.TT_EOF) {
+				if (tokens.ttype != StreamTokenizer.TT_NUMBER) continue;
 				int number = (int) tokens.nval;
-				tokens.nextToken();
+
+				if (tokens.nextToken() != StreamTokenizer.TT_WORD) continue;
 				String label = tokens.sval;
-				tokens.nextToken();
-				Color color = (Color) colorMap.get(tokens.sval);
+
+				if (tokens.nextToken() != StreamTokenizer.TT_WORD) continue;
+				Color color = colorMap.get(tokens.sval);
+				if (color == null) color = Color.black;
 
 				data.addElement(new Integer(number));
 				labels.addElement(label);
 				colors.addElement(color);
 			}
 		}
-		catch (Exception e) {e.printStackTrace();}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
+
 
 	public BarChartFrame(String fname) {
 		BarChartFrameControl control = new BarChartFrameControl();
@@ -111,7 +116,7 @@ class BarChartFrame extends Frame
 		components.setLayout(new FlowLayout());
 
 		colorSelect = new Choice();
-		colorSelect.add ("red");
+		colorSelect.add("red");
 		colorSelect.add("green");
 		colorSelect.add("blue");
 		colorSelect.add("magenta");
