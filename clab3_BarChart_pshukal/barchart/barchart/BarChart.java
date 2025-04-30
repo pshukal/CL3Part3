@@ -10,16 +10,17 @@ class BarChart extends Panel
 	private Vector<String>	dataLabels;
 	private Vector<Color>	dataColors;
 
-       /**
-       SER515 #1: Design By Contract - what is the assumed precondition
-       of the Vectors in use in the for loop? Add a check to avoid any errors.
-       Design an approach to gracefully handle any errors
-       */
 	public void paint(Graphics g)
 	{
 		setSize(200,250);
 		Image duke = Toolkit.getDefaultToolkit().getImage("duke2.gif");
 		g.drawImage(duke, 80, 10, this);
+
+		// SER515 1 done
+		if (data == null || dataLabels == null || dataColors == null)
+			return;
+		if (data.size() != dataLabels.size() || data.size() != dataColors.size())
+			return;
 
 		for (int i = 0; i < data.size(); i++)
 		{				  
